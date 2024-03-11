@@ -5,14 +5,14 @@ lockfile_format_version = 4
 [[package]]
 name = "AssessmentUI"
 version = "1.0.0"
-commit = "dc5f7ad9e1340ebb93a0c1cc3a9ca33db4dd17f6"
+commit = "1c2beb02fe86bf9efc68d9d3a2f5e012573da2eb"
 source = "url+https://github.com/imbellus2/assessment-ui"
 dependencies = [
     "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
     "FishBlox FishBlox 0.0.1 url+https://github.com/imbellus2/fishblox",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
     "RoactRodux RoactRodux 0.5.1 url+https://github.com/roblox/roact-rodux",
     "Rodux roblox/rodux 3.0.0 url+https://github.com/roblox/rodux",
     "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
@@ -21,21 +21,21 @@ dependencies = [
 [[package]]
 name = "AssessmentUtils"
 version = "1.1.4"
-commit = "fe42ef8f2b8c239a7effe1ef7789d2613b48b12d"
+commit = "4708400865639a235b3a8131afbf9aa7fb5a6cae"
 source = "url+https://github.com/imbellus2/assessment-utils"
 dependencies = ["Dash Dash 0.1.9 url+https://github.com/roblox/dash"]
 
 [[package]]
 name = "BentoBlox"
 version = "0.0.1"
-commit = "605d21399b3a42825df8e9758607c3501f95da92"
+commit = "d79b118199a725d6aa56cdfd4e51f355578a3f6e"
 source = "url+https://github.com/imbellus2/bentoblox"
 dependencies = [
     "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
     "Otter Otter 0.1.4 url+https://github.com/roblox/otter",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
@@ -63,12 +63,6 @@ source = "url+https://github.com/roblox/luau-polyfill"
 dependencies = ["Collections Collections 1.1.1 url+https://github.com/roblox/luau-polyfill"]
 
 [[package]]
-name = "Cryo"
-version = "1.0.1"
-commit = "e4573638c510c85c56ff79769857f1549568e649"
-source = "url+https://github.com/roblox/cryo"
-
-[[package]]
 name = "Dash"
 version = "0.1.9"
 commit = "48dd78d2e51e25c900fd3f400f4a6dc7fc1e2a24"
@@ -87,9 +81,9 @@ dependencies = [
     "AssessmentUI AssessmentUI 1.0.0 url+https://github.com/imbellus2/assessment-ui",
     "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
     "FishBlox FishBlox 0.0.1 url+https://github.com/imbellus2/fishblox",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
     "RoactRodux RoactRodux 0.5.1 url+https://github.com/roblox/roact-rodux",
     "Rodux roblox/rodux 3.0.0 url+https://github.com/roblox/rodux",
     "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
@@ -98,15 +92,15 @@ dependencies = [
 [[package]]
 name = "FishBlox"
 version = "0.0.1"
-commit = "1e3c672d5103ecf51cee6dcebcd2237910ebfff9"
+commit = "39ac15a5f0b80efbdc07f7317161963e0710f43e"
 source = "url+https://github.com/imbellus2/fishblox"
 dependencies = [
     "BentoBlox BentoBlox 0.0.1 url+https://github.com/imbellus2/bentoblox",
     "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
     "Otter Otter 0.1.4 url+https://github.com/roblox/otter",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
     "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
 ]
 
@@ -160,40 +154,38 @@ source = "url+https://github.com/roblox/roblox-lua-promise"
 
 [[package]]
 name = "React"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = [
-    "Cryo Cryo 1.0.1 url+https://github.com/roblox/cryo",
     "LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill",
-    "Shared Shared 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "Shared Shared 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
 name = "ReactReconciler"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = [
-    "Cryo Cryo 1.0.1 url+https://github.com/roblox/cryo",
     "LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill",
     "Promise Promise 3.3.0 url+https://github.com/roblox/roblox-lua-promise",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Scheduler Scheduler 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Shared Shared 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Scheduler Scheduler 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Shared Shared 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
 name = "ReactRoblox"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = [
     "LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactReconciler ReactReconciler 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Scheduler Scheduler 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Shared Shared 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactReconciler ReactReconciler 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Scheduler Scheduler 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Shared Shared 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
@@ -204,14 +196,14 @@ source = "url+https://github.com/roblox/roact"
 
 [[package]]
 name = "RoactCompat"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = [
     "LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill",
-    "React React 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
-    "Shared Shared 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
+    "Shared Shared 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
@@ -226,18 +218,18 @@ dependencies = [
 
 [[package]]
 name = "Scheduler"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = [
     "LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill",
-    "Shared Shared 17.0.1-rc.16 url+https://github.com/roblox/roact-alignment",
+    "Shared Shared 17.0.2 url+https://github.com/roblox/roact-alignment",
 ]
 
 [[package]]
 name = "Shared"
-version = "17.0.1-rc.16"
-commit = "8a7220fd07974ff177b1a1308bac45a386716903"
+version = "17.0.2"
+commit = "d25e9dc57680c925cdab7af3550bd751324d9052"
 source = "url+https://github.com/roblox/roact-alignment"
 dependencies = ["LuauPolyfill LuauPolyfill 1.1.1 url+https://github.com/roblox/luau-polyfill"]
 
