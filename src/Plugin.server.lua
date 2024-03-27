@@ -8,7 +8,7 @@ local React = require(Packages.React)
 local ReactRoblox = require(Packages.ReactRoblox)
 
 --Components
-local App = require(script.Parent.Components.ParticleEditorPluginApp)
+local App = require(script.Parent.Components.App)
 
 local root = nil
 local guiFolder = nil

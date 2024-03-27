@@ -3,7 +3,7 @@ local Packages = Root.Packages
 local React = require(Packages.React)
 
 local Dash = require(Packages.Dash)
-local Frame = require(script.Parent.SubComponents.Frame)
+local Panel = require(script.Parent.SubComponents.Panel)
 local Emitter = require(script.Parent.Emitter)
 local Selection = require(script.Parent.Selection)
 
@@ -12,6 +12,11 @@ local App = React.Component:extend("PluginGui")
 function App:init()
     self.selection = game:GetService("Selection")
     self.selection.SelectionChanged:Connect(function()
+        if #self.selection:Get() > 0 then
+            if not self.selection:Get()[#self.selection:Get()]:FindFirstAncestorOfClass("Workspace") then
+                return
+            end
+        end
         self:setState({
             numSelected = #self.selection:Get(),
         })
@@ -44,8 +49,10 @@ function App:render()
         end
     end
 
+    local showUI: boolean = self.state.numSelected and self.state.numSelected > 0
+
     return React.createElement("ScreenGui", {}, {
-        MainWidget = self.state.numSelected and self.state.numSelected > 0 and Frame({}, emitters),
+        MainWidget = showUI and Panel({}, emitters),
 
         -- Selection = Selection({}),
 

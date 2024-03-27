@@ -1,3 +1,4 @@
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local Root = script.Parent.Parent.Parent
 local Packages = Root.Packages
 local React = require(Packages.React)
@@ -5,7 +6,7 @@ local Dash = require(Packages.Dash)
 
 export type Props = {}
 
-local function Frame(props: Props)
+local function Panel(props: Props)
     local ephemerals = {
         uIStroke = React.createElement("UIStroke", {
             Thickness = 2,
@@ -37,20 +38,33 @@ local function Frame(props: Props)
 
     local children = Dash.join(props.Children, ephemerals)
 
-    return React.createElement("Frame", {
-        AnchorPoint = Vector2.new(1, 1),
-        AutomaticSize = Enum.AutomaticSize.Y,
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Position = UDim2.fromScale(1, 1),
-        Size = UDim2.fromOffset(160, 0),
-    }, children)
+    return React.createElement(React.Fragment, {}, {
+        Root = React.createElement("Frame", {
+            AnchorPoint = Vector2.new(1, 1),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            BorderColor3 = Color3.fromRGB(0, 0, 0),
+            BorderSizePixel = 0,
+            Position = UDim2.fromScale(1, 1),
+            Size = UDim2.fromOffset(160, 0),
+        }, {
+
+            MainSection = React.createElement("Frame", {
+                AnchorPoint = Vector2.new(1, 1),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BorderColor3 = Color3.fromRGB(0, 0, 0),
+                BorderSizePixel = 0,
+                Position = UDim2.fromScale(1, 1),
+                Size = UDim2.fromOffset(160, 0),
+            }, children),
+        }),
+    })
 end
 
 return function(props: Props, children)
     if children then
         props.Children = children
     end
-    return React.createElement(Frame, props)
+    return React.createElement(Panel, props)
 end
