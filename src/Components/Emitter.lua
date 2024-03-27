@@ -2,68 +2,76 @@ local Root = script.Parent.Parent
 local Packages = Root.Packages
 local React = require(Packages.React)
 local ReactRoblox = require(Packages.ReactRoblox)
+local Incrementer = require(script.Parent.Parent.Incrementer)
 
 local Icons = {
     VisibleOn = "rbxassetid://16887929840",
     VisibleOff = "rbxassetid://16887929915",
 }
-
 export type Props = {
     Name: string,
     ParticleEmitter: ParticleEmitter,
 }
-
 export type EmitterLabelProps = {
     Name: string,
     Enabled: boolean,
     ParticleEmitter: ParticleEmitter,
     SetEnabled: () -> nil,
+    LayoutOrder: number,
+}
+export type EmitterButtonProps = {
+    ParticleEmitter: ParticleEmitter,
+    Enabled: boolean,
+    SetEnabled: () -> nil,
 }
 
+local function EmitterButton(props: EmitterButtonProps)
+    return React.createElement("Frame", {
+        -- AnchorPoint = Vector2.new(1, 0),
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 1,
+        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        BorderSizePixel = 0,
+        Position = props.Position or UDim2.fromScale(0, 0),
+        Size = UDim2.fromOffset(20, 20),
+    }, {
+        uICorner1 = React.createElement("UICorner", {
+            CornerRadius = UDim.new(0, 4),
+        }),
+
+        visibilityButton = React.createElement("ImageButton", {
+            Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
+            ImageTransparency = 0,
+            AnchorPoint = Vector2.new(0, 0.5),
+            BackgroundColor3 = Color3.fromRGB(255, 0, 4),
+            BackgroundTransparency = 1,
+            BorderColor3 = Color3.fromRGB(0, 0, 0),
+            BorderSizePixel = 0,
+            Position = UDim2.fromScale(0, 0.5),
+            Size = UDim2.fromScale(1, 1),
+            [ReactRoblox.Event.Activated] = function()
+                props.ParticleEmitter.Enabled = not props.ParticleEmitter.Enabled
+                props.ParticleEmitter:Clear()
+                props.SetEnabled(props.ParticleEmitter.Enabled)
+            end,
+        }, {
+            aspectRatio = React.createElement("UIAspectRatioConstraint", {
+                AspectRatio = 1,
+            }),
+        }),
+    })
+end
+
 local function EmitterLabel(props: Props)
+    local layoutOrder = Incrementer.new()
     return React.createElement("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 26),
+        LayoutOrder = props.LayoutOrder,
     }, {
-        checkbox = React.createElement("Frame", {
-            AnchorPoint = Vector2.new(1, 0),
-            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-            BackgroundTransparency = 1,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
-            BorderSizePixel = 0,
-            Position = UDim2.fromScale(1, 0),
-            Size = UDim2.fromOffset(20, 20),
-        }, {
-            uICorner1 = React.createElement("UICorner", {
-                CornerRadius = UDim.new(0, 4),
-            }),
-
-            imageLabel = React.createElement("ImageButton", {
-                -- Image = "rbxassetid://12376829585",
-                -- Image = "rbxassetid://9754130783",
-                Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
-                ImageTransparency = 0,
-                AnchorPoint = Vector2.new(0, 0.5),
-                BackgroundColor3 = Color3.fromRGB(255, 0, 4),
-                BackgroundTransparency = 1,
-                BorderColor3 = Color3.fromRGB(0, 0, 0),
-                BorderSizePixel = 0,
-                Position = UDim2.fromScale(0, 0.5),
-                Size = UDim2.fromScale(1, 1),
-                [ReactRoblox.Event.Activated] = function()
-                    props.ParticleEmitter.Enabled = not props.ParticleEmitter.Enabled
-                    props.SetEnabled(props.ParticleEmitter.Enabled)
-                end,
-            }, {
-                aspectRatio = React.createElement("UIAspectRatioConstraint", {
-                    AspectRatio = 1,
-                }),
-            }),
-        }),
-
         uIPadding1 = React.createElement("UIPadding", {
             PaddingBottom = UDim.new(0, 4),
             PaddingTop = UDim.new(0, 4),
@@ -80,7 +88,8 @@ local function EmitterLabel(props: Props)
             BackgroundTransparency = 1,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
             BorderSizePixel = 0,
-            Size = UDim2.fromScale(0.8, 1),
+            LayoutOrder = layoutOrder:Increment(),
+            Size = UDim2.fromScale(1, 1),
         }),
     })
 end
@@ -93,9 +102,10 @@ local function Emitter(props: Props)
         end
     end, {})
 
+    local layoutOrder = Incrementer.new()
     return React.createElement("ImageButton", {
         Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
-        ImageTransparency = 0.5,
+        ImageTransparency = 1,
         AutomaticSize = Enum.AutomaticSize.XY,
         AnchorPoint = Vector2.new(1, 1),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -106,7 +116,7 @@ local function Emitter(props: Props)
         Size = UDim2.fromScale(1, 0),
     }, {
 
-        React.createElement("Frame", {
+        EmitterContents = React.createElement("Frame", {
             AutomaticSize = Enum.AutomaticSize.Y,
             BackgroundColor3 = Color3.fromRGB(0, 0, 0),
             BackgroundTransparency = 0.9,
@@ -132,15 +142,56 @@ local function Emitter(props: Props)
                 SetEnabled = function(bool: boolean)
                     setEnabled(bool)
                 end,
+                LayoutOrder = layoutOrder:Increment(),
             }),
 
-            properties = React.createElement("Frame", {
+            Row = React.createElement("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1,
+                BorderColor3 = Color3.fromRGB(0, 0, 0),
+                BorderSizePixel = 0,
+                LayoutOrder = layoutOrder:Increment(),
+                Size = UDim2.new(1, 0, 0, 0),
+            }, {
+                visibilityButton = EmitterButton({
+                    ParticleEmitter = props.ParticleEmitter,
+                    Enabled = enabled,
+                    SetEnabled = function(bool: boolean)
+                        setEnabled(bool)
+                    end,
+                }),
+
+                visibilityButton2 = EmitterButton({
+                    ParticleEmitter = props.ParticleEmitter,
+                    Enabled = enabled,
+                    SetEnabled = function(bool: boolean)
+                        setEnabled(bool)
+                    end,
+                }),
+
+                visibilityButton3 = EmitterButton({
+                    ParticleEmitter = props.ParticleEmitter,
+                    Enabled = enabled,
+                    SetEnabled = function(bool: boolean)
+                        setEnabled(bool)
+                    end,
+                }),
+
+                uIListLayout = React.createElement("UIListLayout", {
+                    FillDirection = Enum.FillDirection.Horizontal,
+                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                    SortOrder = Enum.SortOrder.LayoutOrder,
+                }),
+            }),
+
+            Properties = React.createElement("Frame", {
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Color3.fromRGB(0, 0, 0),
                 BackgroundTransparency = 0.9,
                 BorderColor3 = Color3.fromRGB(0, 0, 0),
                 BorderSizePixel = 0,
-                LayoutOrder = 1,
+                LayoutOrder = layoutOrder:Increment(),
                 Size = UDim2.fromScale(1, 0),
             }, {
                 Emit = React.createElement("Frame", {

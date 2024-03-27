@@ -3,42 +3,6 @@
 lockfile_format_version = 4
 
 [[package]]
-name = "AssessmentUI"
-version = "1.0.0"
-commit = "1c2beb02fe86bf9efc68d9d3a2f5e012573da2eb"
-source = "url+https://github.com/imbellus2/assessment-ui"
-dependencies = [
-    "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
-    "FishBlox FishBlox 0.0.1 url+https://github.com/imbellus2/fishblox",
-    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "RoactRodux RoactRodux 0.5.1 url+https://github.com/roblox/roact-rodux",
-    "Rodux roblox/rodux 3.0.0 url+https://github.com/roblox/rodux",
-    "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
-]
-
-[[package]]
-name = "AssessmentUtils"
-version = "1.1.4"
-commit = "4708400865639a235b3a8131afbf9aa7fb5a6cae"
-source = "url+https://github.com/imbellus2/assessment-utils"
-dependencies = ["Dash Dash 0.1.9 url+https://github.com/roblox/dash"]
-
-[[package]]
-name = "BentoBlox"
-version = "0.0.1"
-commit = "d79b118199a725d6aa56cdfd4e51f355578a3f6e"
-source = "url+https://github.com/imbellus2/bentoblox"
-dependencies = [
-    "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
-    "Otter Otter 0.1.4 url+https://github.com/roblox/otter",
-    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
-]
-
-[[package]]
 name = "Boolean"
 version = "1.1.1"
 commit = "5f1257fdda8f23a782e7d461f00212db1b021690"
@@ -78,30 +42,12 @@ source = "url+https://github.com/roblox/luau-polyfill"
 name = "FactoriesPlugin"
 version = "0.1.0"
 dependencies = [
-    "AssessmentUI AssessmentUI 1.0.0 url+https://github.com/imbellus2/assessment-ui",
     "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
-    "FishBlox FishBlox 0.0.1 url+https://github.com/imbellus2/fishblox",
     "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
     "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
     "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
     "RoactRodux RoactRodux 0.5.1 url+https://github.com/roblox/roact-rodux",
     "Rodux roblox/rodux 3.0.0 url+https://github.com/roblox/rodux",
-    "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
-]
-
-[[package]]
-name = "FishBlox"
-version = "0.0.1"
-commit = "39ac15a5f0b80efbdc07f7317161963e0710f43e"
-source = "url+https://github.com/imbellus2/fishblox"
-dependencies = [
-    "BentoBlox BentoBlox 0.0.1 url+https://github.com/imbellus2/bentoblox",
-    "Dash Dash 0.1.9 url+https://github.com/roblox/dash",
-    "Otter Otter 0.1.4 url+https://github.com/roblox/otter",
-    "React React 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "ReactRoblox ReactRoblox 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "Roact RoactCompat 17.0.2 url+https://github.com/roblox/roact-alignment",
-    "Utilities AssessmentUtils 1.1.4 url+https://github.com/imbellus2/assessment-utils",
 ]
 
 [[package]]
@@ -139,12 +85,6 @@ name = "Number"
 version = "1.1.1"
 commit = "5f1257fdda8f23a782e7d461f00212db1b021690"
 source = "url+https://github.com/roblox/luau-polyfill"
-
-[[package]]
-name = "Otter"
-version = "0.1.4"
-commit = "20b9a8f2a36e184f931a90aac4589d02c385511d"
-source = "url+https://github.com/roblox/otter"
 
 [[package]]
 name = "Promise"
