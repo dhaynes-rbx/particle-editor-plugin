@@ -4,10 +4,8 @@ local React = require(Packages.React)
 local ReactRoblox = require(Packages.ReactRoblox)
 local Incrementer = require(script.Parent.Parent.Incrementer)
 
-local Icons = {
-    VisibleOn = "rbxassetid://16887929840",
-    VisibleOff = "rbxassetid://16887929915",
-}
+local Button = require(script.Parent.SubComponents.Button)
+
 export type Props = {
     Name: string,
     ParticleEmitter: ParticleEmitter,
@@ -15,54 +13,13 @@ export type Props = {
 export type EmitterLabelProps = {
     Name: string,
     Enabled: boolean,
-    ParticleEmitter: ParticleEmitter,
     SetEnabled: () -> nil,
     LayoutOrder: number,
 }
-export type EmitterButtonProps = {
-    ParticleEmitter: ParticleEmitter,
-    Enabled: boolean,
-    SetEnabled: () -> nil,
-}
-
-local function EmitterButton(props: EmitterButtonProps)
-    return React.createElement("Frame", {
-        -- AnchorPoint = Vector2.new(1, 0),
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = 1,
-        BorderColor3 = Color3.fromRGB(0, 0, 0),
-        BorderSizePixel = 0,
-        Position = props.Position or UDim2.fromScale(0, 0),
-        Size = UDim2.fromOffset(20, 20),
-    }, {
-        uICorner1 = React.createElement("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-        }),
-
-        visibilityButton = React.createElement("ImageButton", {
-            Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
-            ImageTransparency = 0,
-            AnchorPoint = Vector2.new(0, 0.5),
-            BackgroundColor3 = Color3.fromRGB(255, 0, 4),
-            BackgroundTransparency = 1,
-            BorderColor3 = Color3.fromRGB(0, 0, 0),
-            BorderSizePixel = 0,
-            Position = UDim2.fromScale(0, 0.5),
-            Size = UDim2.fromScale(1, 1),
-            [ReactRoblox.Event.Activated] = function()
-                props.ParticleEmitter.Enabled = not props.ParticleEmitter.Enabled
-                props.ParticleEmitter:Clear()
-                props.SetEnabled(props.ParticleEmitter.Enabled)
-            end,
-        }, {
-            aspectRatio = React.createElement("UIAspectRatioConstraint", {
-                AspectRatio = 1,
-            }),
-        }),
-    })
-end
 
 local function EmitterLabel(props: Props)
+    local hover, setHover = React.useState(false)
+    local labelSizeX = hover and 0.7 or 1
     local layoutOrder = Incrementer.new()
     return React.createElement("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -71,6 +28,13 @@ local function EmitterLabel(props: Props)
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 26),
         LayoutOrder = props.LayoutOrder,
+
+        [ReactRoblox.Event.MouseEnter] = function()
+            setHover(true)
+        end,
+        [ReactRoblox.Event.MouseLeave] = function()
+            setHover(false)
+        end,
     }, {
         uIPadding1 = React.createElement("UIPadding", {
             PaddingBottom = UDim.new(0, 4),
@@ -89,18 +53,36 @@ local function EmitterLabel(props: Props)
             BorderColor3 = Color3.fromRGB(0, 0, 0),
             BorderSizePixel = 0,
             LayoutOrder = layoutOrder:Increment(),
-            Size = UDim2.fromScale(1, 1),
+            Size = UDim2.fromScale(labelSizeX, 1),
+        }),
+        buttonFrame = hover and React.createElement("Frame", {
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            LayoutOrder = layoutOrder:Increment(),
+            AutomaticSize = Enum.AutomaticSize.Y,
+            Size = UDim2.fromScale(1, 0),
+        }, {
+
+            visibilityButton = Button({
+                ParticleEmitter = props.ParticleEmitter,
+                Enabled = props.Enabled,
+                OnActivated = function()
+                    props.SetEnabled()
+                end,
+            }),
+
+            uIListLayout = React.createElement("UIListLayout", {
+                FillDirection = Enum.FillDirection.Horizontal,
+                HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                Padding = UDim.new(0, 4),
+                SortOrder = Enum.SortOrder.LayoutOrder,
+            }),
         }),
     })
 end
 
 local function Emitter(props: Props)
-    local enabled, setEnabled = React.useState(props.ParticleEmitter.Enabled)
-    React.useEffect(function()
-        return function()
-            --Cleanup
-        end
-    end, {})
+    local emitterEnabled, setEmitterEnabled = React.useState(props.ParticleEmitter.Enabled)
 
     local layoutOrder = Incrementer.new()
     return React.createElement("ImageButton", {
@@ -133,19 +115,23 @@ local function Emitter(props: Props)
             }),
             uIListLayout = React.createElement("UIListLayout", {
                 SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 4),
             }),
 
             EmitterLabel = EmitterLabel({
                 Name = props.Name,
                 ParticleEmitter = props.ParticleEmitter,
-                Enabled = enabled,
-                SetEnabled = function(bool: boolean)
-                    setEnabled(bool)
-                end,
+                Enabled = emitterEnabled,
+
                 LayoutOrder = layoutOrder:Increment(),
+                SetEnabled = function()
+                    props.ParticleEmitter.Enabled = not emitterEnabled
+                    props.ParticleEmitter:Clear()
+                    setEmitterEnabled(not emitterEnabled)
+                end,
             }),
 
-            Row = React.createElement("Frame", {
+            ButtonsRow = React.createElement("Frame", {
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                 BackgroundTransparency = 1,
@@ -154,33 +140,16 @@ local function Emitter(props: Props)
                 LayoutOrder = layoutOrder:Increment(),
                 Size = UDim2.new(1, 0, 0, 0),
             }, {
-                visibilityButton = EmitterButton({
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = enabled,
-                    SetEnabled = function(bool: boolean)
-                        setEnabled(bool)
-                    end,
-                }),
-
-                visibilityButton2 = EmitterButton({
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = enabled,
-                    SetEnabled = function(bool: boolean)
-                        setEnabled(bool)
-                    end,
-                }),
-
-                visibilityButton3 = EmitterButton({
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = enabled,
-                    SetEnabled = function(bool: boolean)
-                        setEnabled(bool)
-                    end,
-                }),
+                -- PlayButton = Button({
+                --     ParticleEmitter = props.ParticleEmitter,
+                --     Enabled = true,
+                --     OnActivated = function() end,
+                -- }),
 
                 uIListLayout = React.createElement("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
                     HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                    VerticalAlignment = Enum.VerticalAlignment.Center,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                 }),
             }),
