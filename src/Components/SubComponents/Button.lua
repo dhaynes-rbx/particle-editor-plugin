@@ -10,6 +10,7 @@ local enabledTransparency = 0.75
 
 export type Props = {
     Icon: string,
+    LayoutOrder: number,
     ParticleEmitter: ParticleEmitter,
     Enabled: boolean,
     OnActivated: () -> nil,
@@ -23,6 +24,7 @@ local function Button(props: Props)
         BackgroundTransparency = (hover or props.Enabled) and 0.75 or 1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
+        LayoutOrder = props.LayoutOrder,
         Position = props.Position or UDim2.fromScale(0, 0),
         Size = UDim2.fromOffset(20, 20),
     }, {
@@ -31,7 +33,6 @@ local function Button(props: Props)
         }),
 
         button = React.createElement("ImageButton", {
-            -- Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
             Image = props.Icon,
             ImageTransparency = 0,
             AnchorPoint = Vector2.new(0, 0.5),
@@ -42,7 +43,6 @@ local function Button(props: Props)
             Position = UDim2.fromScale(0, 0.5),
             Size = UDim2.fromScale(1, 1),
             [ReactRoblox.Event.Activated] = function()
-                print("Click")
                 props.OnActivated()
             end,
             [ReactRoblox.Event.MouseEnter] = function()

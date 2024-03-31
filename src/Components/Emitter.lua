@@ -69,15 +69,6 @@ local function EmitterLabel(props: Props)
             Size = UDim2.fromScale(1, 0),
         }, {
 
-            visibilityButton = Button({
-                Icon = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
-                ParticleEmitter = props.ParticleEmitter,
-                Enabled = props.Enabled,
-                OnActivated = function()
-                    props.SetEnabled()
-                end,
-            }),
-
             uIListLayout = React.createElement("UIListLayout", {
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
@@ -91,6 +82,7 @@ end
 local function Emitter(props: Props)
     local emitterVisible, setEmitterVisible = React.useState(props.ParticleEmitter.Enabled)
     local emitterEnabled, setEmitterEnabled = React.useState(props.ParticleEmitter.Enabled)
+    local emitterPaused, setEmitterPaused = React.useState(props.ParticleEmitter.TimeScale == 0)
 
     local layoutOrder = Incrementer.new()
     return React.createElement("ImageButton", {
@@ -132,15 +124,10 @@ local function Emitter(props: Props)
                 Enabled = emitterEnabled,
 
                 LayoutOrder = layoutOrder:Increment(),
-                SetEnabled = function()
-                    props.ParticleEmitter.Enabled = not emitterEnabled
-                    props.ParticleEmitter:Clear()
-                    setEmitterEnabled(not emitterEnabled)
-                    setEmitterVisible(not emitterEnabled)
-                end,
+                SetEnabled = function() end,
             }),
 
-            ButtonsRow = emitterVisible and React.createElement("Frame", {
+            ButtonsRow = React.createElement("Frame", {
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                 BackgroundTransparency = 1,
@@ -149,171 +136,203 @@ local function Emitter(props: Props)
                 LayoutOrder = layoutOrder:Increment(),
                 Size = UDim2.new(1, 0, 0, 0),
             }, {
-                PlayButton = Button({
-                    Icon = Icons.Play,
+                visibilityButton = Button({
+                    Icon = emitterVisible and Icons.VisibleOn or Icons.VisibleOff,
+                    LayoutOrder = layoutOrder:Increment(),
                     ParticleEmitter = props.ParticleEmitter,
-                    Enabled = true,
-                    OnActivated = function() end,
+                    Enabled = emitterVisible,
+                    OnActivated = function()
+                        props.ParticleEmitter.Enabled = not emitterEnabled
+                        props.ParticleEmitter:Clear()
+                        setEmitterEnabled(not emitterEnabled)
+                        setEmitterVisible(not emitterEnabled)
+                    end,
+                }),
+                PlayButton = emitterVisible and Button({
+                    Icon = Icons.Play,
+                    LayoutOrder = layoutOrder:Increment(),
+                    ParticleEmitter = props.ParticleEmitter,
+                    Enabled = emitterEnabled,
+                    OnActivated = function()
+                        props.ParticleEmitter.Enabled = not emitterEnabled
+                        setEmitterEnabled(not emitterEnabled)
+                    end,
+                }),
+                PauseButton = emitterVisible and Button({
+                    Icon = Icons.Pause,
+                    LayoutOrder = layoutOrder:Increment(),
+                    ParticleEmitter = props.ParticleEmitter,
+                    Enabled = emitterPaused,
+                    OnActivated = function()
+                        props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
+                        setEmitterPaused(not emitterPaused)
+                    end,
                 }),
 
                 uIListLayout = React.createElement("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Right,
+                    HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                    Padding = UDim.new(0, 4),
                     VerticalAlignment = Enum.VerticalAlignment.Center,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                 }),
             }),
 
-            Properties = emitterVisible
-                and React.createElement("Frame", {
-                    AutomaticSize = Enum.AutomaticSize.Y,
-                    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-                    BackgroundTransparency = 0.9,
+            --[[ Properties
+   
+            Properties = React.createElement("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                BackgroundTransparency = 0.9,
+                BorderColor3 = Color3.fromRGB(0, 0, 0),
+                BorderSizePixel = 0,
+                LayoutOrder = layoutOrder:Increment(),
+                Size = UDim2.fromScale(1, 0),
+            }, {
+                Emit = React.createElement("Frame", {
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                    BackgroundTransparency = 1,
                     BorderColor3 = Color3.fromRGB(0, 0, 0),
                     BorderSizePixel = 0,
-                    LayoutOrder = layoutOrder:Increment(),
-                    Size = UDim2.fromScale(1, 0),
+                    LayoutOrder = 2,
+                    Size = UDim2.new(1, 0, 0, 26),
                 }, {
-                    Emit = React.createElement("Frame", {
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        BackgroundTransparency = 1,
+                    numberInput = React.createElement("Frame", {
+                        AnchorPoint = Vector2.new(1, 0),
+                        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                        BackgroundTransparency = 0.5,
                         BorderColor3 = Color3.fromRGB(0, 0, 0),
                         BorderSizePixel = 0,
-                        LayoutOrder = 2,
-                        Size = UDim2.new(1, 0, 0, 26),
+                        Position = UDim2.fromScale(1, 0),
+                        Size = UDim2.new(0, 50, 1, 0),
                     }, {
-                        numberInput = React.createElement("Frame", {
-                            AnchorPoint = Vector2.new(1, 0),
-                            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-                            BackgroundTransparency = 0.5,
-                            BorderColor3 = Color3.fromRGB(0, 0, 0),
-                            BorderSizePixel = 0,
-                            Position = UDim2.fromScale(1, 0),
-                            Size = UDim2.new(0, 50, 1, 0),
-                        }, {
-                            uICorner2 = React.createElement("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                            }),
-
-                            textBox = React.createElement("TextBox", {
-                                CursorPosition = -1,
-                                FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-                                Text = "5",
-                                TextColor3 = Color3.fromRGB(255, 255, 255),
-                                TextSize = 14,
-                                TextXAlignment = Enum.TextXAlignment.Right,
-                                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                                BackgroundTransparency = 1,
-                                BorderColor3 = Color3.fromRGB(0, 0, 0),
-                                BorderSizePixel = 0,
-                                Size = UDim2.fromScale(1, 1),
-                            }),
-
-                            uIPadding2 = React.createElement("UIPadding", {
-                                PaddingLeft = UDim.new(0, 4),
-                                PaddingRight = UDim.new(0, 4),
-                            }),
+                        uICorner2 = React.createElement("UICorner", {
+                            CornerRadius = UDim.new(0, 4),
                         }),
 
-                        uIPadding3 = React.createElement("UIPadding", {
-                            PaddingBottom = UDim.new(0, 4),
-                            PaddingTop = UDim.new(0, 4),
-                        }),
-
-                        textButton1 = React.createElement("TextButton", {
+                        textBox = React.createElement("TextBox", {
+                            CursorPosition = -1,
                             FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-                            Text = "Emit",
-                            TextColor3 = Color3.fromRGB(0, 0, 0),
+                            Text = "5",
+                            TextColor3 = Color3.fromRGB(255, 255, 255),
                             TextSize = 14,
-                            TextXAlignment = Enum.TextXAlignment.Left,
+                            TextXAlignment = Enum.TextXAlignment.Right,
                             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                             BackgroundTransparency = 1,
                             BorderColor3 = Color3.fromRGB(0, 0, 0),
                             BorderSizePixel = 0,
-                            Size = UDim2.fromScale(0.5, 1),
-                            [ReactRoblox.Event.Activated] = function()
-                                props.ParticleEmitter:Emit(100)
-                            end,
+                            Size = UDim2.fromScale(1, 1),
+                        }),
+
+                        uIPadding2 = React.createElement("UIPadding", {
+                            PaddingLeft = UDim.new(0, 4),
+                            PaddingRight = UDim.new(0, 4),
                         }),
                     }),
 
-                    TimeScale = React.createElement("Frame", {
+                    uIPadding3 = React.createElement("UIPadding", {
+                        PaddingBottom = UDim.new(0, 4),
+                        PaddingTop = UDim.new(0, 4),
+                    }),
+
+                    textButton1 = React.createElement("TextButton", {
+                        FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+                        Text = "Emit",
+                        TextColor3 = Color3.fromRGB(0, 0, 0),
+                        TextSize = 14,
+                        TextXAlignment = Enum.TextXAlignment.Left,
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         BackgroundTransparency = 1,
                         BorderColor3 = Color3.fromRGB(0, 0, 0),
                         BorderSizePixel = 0,
-                        LayoutOrder = 3,
-                        Size = UDim2.new(1, 0, 0, 26),
-                    }, {
-                        numberInput1 = React.createElement("Frame", {
-                            AnchorPoint = Vector2.new(1, 0),
-                            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-                            BackgroundTransparency = 0.5,
-                            BorderColor3 = Color3.fromRGB(0, 0, 0),
-                            BorderSizePixel = 0,
-                            Position = UDim2.fromScale(1, 0),
-                            Size = UDim2.new(0, 30, 1, 0),
-                        }, {
-                            uICorner3 = React.createElement("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                            }),
-
-                            textBox1 = React.createElement("TextBox", {
-                                FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-                                Text = "1",
-                                TextColor3 = Color3.fromRGB(255, 255, 255),
-                                TextSize = 14,
-                                TextXAlignment = Enum.TextXAlignment.Right,
-                                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                                BackgroundTransparency = 1,
-                                BorderColor3 = Color3.fromRGB(0, 0, 0),
-                                BorderSizePixel = 0,
-                                Size = UDim2.fromScale(1, 1),
-                            }),
-
-                            uIPadding4 = React.createElement("UIPadding", {
-                                PaddingLeft = UDim.new(0, 4),
-                                PaddingRight = UDim.new(0, 4),
-                            }),
-                        }),
-
-                        uIPadding5 = React.createElement("UIPadding", {
-                            PaddingBottom = UDim.new(0, 4),
-                            PaddingTop = UDim.new(0, 4),
-                        }),
-
-                        textButton2 = React.createElement("TextButton", {
-                            FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
-                            Text = "TimeScale",
-                            TextColor3 = Color3.fromRGB(0, 0, 0),
-                            TextSize = 14,
-                            TextXAlignment = Enum.TextXAlignment.Left,
-                            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                            BackgroundTransparency = 1,
-                            BorderColor3 = Color3.fromRGB(0, 0, 0),
-                            BorderSizePixel = 0,
-                            Size = UDim2.fromScale(0.5, 1),
-                            [ReactRoblox.Event.Activated] = function()
-                                local timeScale = props.ParticleEmitter.TimeScale
-                                if timeScale == 0 then
-                                    timeScale = 1
-                                else
-                                    timeScale = 0
-                                end
-                                props.ParticleEmitter.TimeScale = timeScale
-                            end,
-                        }),
-                    }),
-
-                    --Ephemerals
-                    uIListLayout1 = React.createElement("UIListLayout", {
-                        SortOrder = Enum.SortOrder.LayoutOrder,
-                    }),
-                    uIPadding6 = React.createElement("UIPadding", {
-                        PaddingLeft = UDim.new(0, 4),
-                        PaddingRight = UDim.new(0, 4),
+                        Size = UDim2.fromScale(0.5, 1),
+                        [ReactRoblox.Event.Activated] = function()
+                            props.ParticleEmitter:Emit(100)
+                        end,
                     }),
                 }),
+                --]]
+
+            --[[ TimeScale
+                    -- TimeScale = React.createElement("Frame", {
+                        --     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                        --     BackgroundTransparency = 1,
+                        --     BorderColor3 = Color3.fromRGB(0, 0, 0),
+                        --     BorderSizePixel = 0,
+                        --     LayoutOrder = 3,
+                        --     Size = UDim2.new(1, 0, 0, 26),
+                        -- }, {
+                --     numberInput1 = React.createElement("Frame", {
+                    --         AnchorPoint = Vector2.new(1, 0),
+                    --         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                    --         BackgroundTransparency = 0.5,
+                    --         BorderColor3 = Color3.fromRGB(0, 0, 0),
+                    --         BorderSizePixel = 0,
+                    --         Position = UDim2.fromScale(1, 0),
+                    --         Size = UDim2.new(0, 30, 1, 0),
+                    --     }, {
+                --         uICorner3 = React.createElement("UICorner", {
+                    --             CornerRadius = UDim.new(0, 4),
+                --         }),
+
+                --         textBox1 = React.createElement("TextBox", {
+                --             FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+                --             Text = "1",
+                --             TextColor3 = Color3.fromRGB(255, 255, 255),
+                --             TextSize = 14,
+                --             TextXAlignment = Enum.TextXAlignment.Right,
+                --             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                --             BackgroundTransparency = 1,
+                --             BorderColor3 = Color3.fromRGB(0, 0, 0),
+                --             BorderSizePixel = 0,
+                --             Size = UDim2.fromScale(1, 1),
+                --         }),
+
+                --         uIPadding4 = React.createElement("UIPadding", {
+                --             PaddingLeft = UDim.new(0, 4),
+                --             PaddingRight = UDim.new(0, 4),
+                --         }),
+                --     }),
+                
+                --     uIPadding5 = React.createElement("UIPadding", {
+                --         PaddingBottom = UDim.new(0, 4),
+                --         PaddingTop = UDim.new(0, 4),
+                --     }),
+                
+                --     textButton2 = React.createElement("TextButton", {
+                    --         FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json"),
+                --         Text = "TimeScale",
+                --         TextColor3 = Color3.fromRGB(0, 0, 0),
+                --         TextSize = 14,
+                --         TextXAlignment = Enum.TextXAlignment.Left,
+                --         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                --         BackgroundTransparency = 1,
+                --         BorderColor3 = Color3.fromRGB(0, 0, 0),
+                --         BorderSizePixel = 0,
+                --         Size = UDim2.fromScale(0.5, 1),
+                --         [ReactRoblox.Event.Activated] = function()
+                --             local timeScale = props.ParticleEmitter.TimeScale
+                --             if timeScale == 0 then
+                --                 timeScale = 1
+                --             else
+                --                 timeScale = 0
+                --             end
+                --             props.ParticleEmitter.TimeScale = timeScale
+                --         end,
+                --     }),
+                -- }),
+
+                --Ephemerals
+                uIListLayout1 = React.createElement("UIListLayout", {
+                    SortOrder = Enum.SortOrder.LayoutOrder,
+                }),
+                uIPadding6 = React.createElement("UIPadding", {
+                    PaddingLeft = UDim.new(0, 4),
+                    PaddingRight = UDim.new(0, 4),
+                }),
+                ]]
+            -- }),
+            --]]
         }),
     })
 end
