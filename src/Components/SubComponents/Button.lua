@@ -9,6 +9,7 @@ local Icons = require(Root.Icons)
 local enabledTransparency = 0.75
 
 export type Props = {
+    Icon: string,
     ParticleEmitter: ParticleEmitter,
     Enabled: boolean,
     OnActivated: () -> nil,
@@ -30,7 +31,8 @@ local function Button(props: Props)
         }),
 
         button = React.createElement("ImageButton", {
-            Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
+            -- Image = props.Enabled and Icons.VisibleOn or Icons.VisibleOff,
+            Image = props.Icon,
             ImageTransparency = 0,
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Color3.fromRGB(255, 0, 4),
