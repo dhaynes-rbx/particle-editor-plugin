@@ -11,7 +11,6 @@ local enabledTransparency = 0.75
 export type Props = {
     Icon: string,
     LayoutOrder: number,
-    ParticleEmitter: ParticleEmitter,
     Enabled: boolean,
     OnActivated: () -> nil,
 }
@@ -28,10 +27,6 @@ local function Button(props: Props)
         Position = props.Position or UDim2.fromScale(0, 0),
         Size = UDim2.fromOffset(20, 20),
     }, {
-        uICorner1 = React.createElement("UICorner", {
-            CornerRadius = UDim.new(0, 4),
-        }),
-
         button = React.createElement("ImageButton", {
             Image = props.Icon,
             ImageTransparency = 0,
@@ -55,6 +50,16 @@ local function Button(props: Props)
             aspectRatio = React.createElement("UIAspectRatioConstraint", {
                 AspectRatio = 1,
             }),
+        }),
+
+        uICorner1 = React.createElement("UICorner", {
+            CornerRadius = UDim.new(0, 4),
+        }),
+        uiPadding = React.createElement("UIPadding", {
+            PaddingBottom = UDim.new(0, 2),
+            PaddingLeft = UDim.new(0, 2),
+            PaddingRight = UDim.new(0, 2),
+            PaddingTop = UDim.new(0, 2),
         }),
     })
 end

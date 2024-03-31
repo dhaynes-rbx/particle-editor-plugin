@@ -8,6 +8,7 @@ local Incrementer = require(script.Parent.Parent.Incrementer)
 local Icons = require(Root.Icons)
 
 local Button = require(script.Parent.SubComponents.Button)
+local ButtonWithLabel = require(script.Parent.SubComponents.ButtonWithLabel)
 
 export type Props = {
     Name: string,
@@ -22,7 +23,7 @@ export type EmitterLabelProps = {
 
 local function EmitterLabel(props: Props)
     local hover, setHover = React.useState(false)
-    local labelSizeX = hover and 0.7 or 1
+    local labelSizeX = hover and 0.8 or 1
     local layoutOrder = Incrementer.new()
     return React.createElement("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -69,6 +70,15 @@ local function EmitterLabel(props: Props)
             Size = UDim2.fromScale(1, 0),
         }, {
 
+            findButton = Button({
+                Icon = Icons.Find,
+                LayoutOrder = layoutOrder:Increment(),
+                Enabled = false,
+                OnActivated = function()
+                    Selection:Set({ props.ParticleEmitter })
+                end,
+            }),
+
             uIListLayout = React.createElement("UIListLayout", {
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = Enum.HorizontalAlignment.Right,
@@ -80,7 +90,6 @@ local function EmitterLabel(props: Props)
 end
 
 local function Emitter(props: Props)
-    local emitterVisible, setEmitterVisible = React.useState(props.ParticleEmitter.Enabled)
     local emitterEnabled, setEmitterEnabled = React.useState(props.ParticleEmitter.Enabled)
     local emitterPaused, setEmitterPaused = React.useState(props.ParticleEmitter.TimeScale == 0)
 
@@ -127,59 +136,80 @@ local function Emitter(props: Props)
                 SetEnabled = function() end,
             }),
 
-            ButtonsRow = React.createElement("Frame", {
-                AutomaticSize = Enum.AutomaticSize.Y,
-                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+            Buttons = React.createElement("Frame", {
                 BackgroundTransparency = 1,
-                BorderColor3 = Color3.fromRGB(0, 0, 0),
                 BorderSizePixel = 0,
                 LayoutOrder = layoutOrder:Increment(),
-                Size = UDim2.new(1, 0, 0, 0),
+                Size = UDim2.new(1, 0, 0, 26),
             }, {
-                visibilityButton = Button({
-                    Icon = emitterVisible and Icons.VisibleOn or Icons.VisibleOff,
+                EmitButton = ButtonWithLabel({
+                    Icon = Icons.Emit,
                     LayoutOrder = layoutOrder:Increment(),
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = emitterVisible,
-                    OnActivated = function()
-                        props.ParticleEmitter.Enabled = not emitterEnabled
-                        props.ParticleEmitter:Clear()
-                        setEmitterEnabled(not emitterEnabled)
-                        setEmitterVisible(not emitterEnabled)
-                    end,
-                }),
-                PlayButton = emitterVisible and Button({
-                    Icon = Icons.Play,
-                    LayoutOrder = layoutOrder:Increment(),
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = emitterEnabled,
-                    OnActivated = function()
-                        props.ParticleEmitter.Enabled = not emitterEnabled
-                        setEmitterEnabled(not emitterEnabled)
-                    end,
-                }),
-                PauseButton = emitterVisible and Button({
-                    Icon = Icons.Pause,
-                    LayoutOrder = layoutOrder:Increment(),
-                    ParticleEmitter = props.ParticleEmitter,
-                    Enabled = emitterPaused,
-                    OnActivated = function()
-                        props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
-                        setEmitterPaused(not emitterPaused)
+                    Enabled = false,
+                    OnActivated = function(value)
+                        props.ParticleEmitter:Emit(value)
                     end,
                 }),
 
-                uIListLayout = React.createElement("UIListLayout", {
-                    FillDirection = Enum.FillDirection.Horizontal,
-                    HorizontalAlignment = Enum.HorizontalAlignment.Left,
-                    Padding = UDim.new(0, 4),
-                    VerticalAlignment = Enum.VerticalAlignment.Center,
-                    SortOrder = Enum.SortOrder.LayoutOrder,
+                ButtonsRow = React.createElement("Frame", {
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                    BackgroundTransparency = 1,
+                    BorderColor3 = Color3.fromRGB(0, 0, 0),
+                    BorderSizePixel = 0,
+                    LayoutOrder = layoutOrder:Increment(),
+                    Size = UDim2.new(1, 0, 1, 0),
+                }, {
+                    -- visibilityButton = Button({
+                    --     Icon = emitterVisible and Icons.VisibleOn or Icons.VisibleOff,
+                    --     LayoutOrder = layoutOrder:Increment(),
+                    --     Enabled = emitterVisible,
+                    --     OnActivated = function()
+                    --         props.ParticleEmitter.Enabled = not emitterEnabled
+                    --         props.ParticleEmitter:Clear()
+                    --         setEmitterEnabled(not emitterEnabled)
+                    --         setEmitterVisible(not emitterEnabled)
+                    --     end,
+                    -- }),
+                    PlayButton = Button({
+                        Icon = Icons.Play,
+                        LayoutOrder = layoutOrder:Increment(),
+                        Enabled = emitterEnabled,
+                        OnActivated = function()
+                            props.ParticleEmitter.Enabled = not emitterEnabled
+                            setEmitterEnabled(not emitterEnabled)
+                        end,
+                    }),
+                    PauseButton = Button({
+                        Icon = Icons.Pause,
+                        LayoutOrder = layoutOrder:Increment(),
+                        Enabled = emitterPaused,
+                        OnActivated = function()
+                            props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
+                            setEmitterPaused(not emitterPaused)
+                        end,
+                    }),
+                    ClearButton = Button({
+                        Icon = Icons.Clear,
+                        LayoutOrder = layoutOrder:Increment(),
+                        Enabled = false,
+                        OnActivated = function()
+                            props.ParticleEmitter:Clear()
+                        end,
+                    }),
+
+                    uIListLayout = React.createElement("UIListLayout", {
+                        FillDirection = Enum.FillDirection.Horizontal,
+                        HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                        Padding = UDim.new(0, 4),
+                        VerticalAlignment = Enum.VerticalAlignment.Center,
+                        SortOrder = Enum.SortOrder.LayoutOrder,
+                    }),
                 }),
             }),
 
             --[[ Properties
-   
+            
             Properties = React.createElement("Frame", {
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Color3.fromRGB(0, 0, 0),
