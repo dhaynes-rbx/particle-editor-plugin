@@ -180,15 +180,15 @@ local function Emitter(props: Props)
                             setEmitterEnabled(not emitterEnabled)
                         end,
                     }),
-                    PauseButton = Button({
-                        Icon = Icons.Pause,
-                        LayoutOrder = layoutOrder:Increment(),
-                        Enabled = emitterPaused,
-                        OnActivated = function()
-                            props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
-                            setEmitterPaused(not emitterPaused)
-                        end,
-                    }),
+                    -- PauseButton = Button({
+                    --     Icon = Icons.Pause,
+                    --     LayoutOrder = layoutOrder:Increment(),
+                    --     Enabled = emitterPaused,
+                    --     OnActivated = function()
+                    --         props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
+                    --         setEmitterPaused(not emitterPaused)
+                    --     end,
+                    -- }),
                     ClearButton = Button({
                         Icon = Icons.Clear,
                         LayoutOrder = layoutOrder:Increment(),

@@ -30,6 +30,7 @@ local function Button(props: Props)
         button = React.createElement("ImageButton", {
             Image = props.Icon,
             ImageTransparency = 0,
+            ImageColor3 = Color3.new(0, 0, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Color3.fromRGB(255, 0, 4),
             BackgroundTransparency = 1,
