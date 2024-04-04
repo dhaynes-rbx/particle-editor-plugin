@@ -1,3 +1,4 @@
+local StudioService = game:GetService("StudioService")
 return {
     Clear = "rbxassetid://15626193282",
     Emit = "rbxassetid://16948285328",
@@ -7,4 +8,7 @@ return {
     Stop = "rbxassetid://16946436543",
     VisibleOff = "rbxassetid://16887929915",
     VisibleOn = "rbxassetid://16887929840",
+    GetClassIcon = function(className)
+        return StudioService:GetClassIcon(className).Image
+    end,
 }
