@@ -1,3 +1,4 @@
+local UserInputService = game:GetService("UserInputService")
 local Root = script.Parent.Parent
 local Packages = Root.Packages
 local React = require(Packages.React)
@@ -8,6 +9,13 @@ local Emitter = require(script.Parent.Emitter)
 local Selection = require(script.Parent.Selection)
 
 local App = React.Component:extend("PluginGui")
+
+local HoveredButtons = {
+    Play = "Play",
+    Reset = "Reset",
+    Emit = "Emit",
+    None = "None",
+}
 
 function App:init()
     self.selection = game:GetService("Selection")
@@ -20,39 +28,69 @@ function App:init()
         self:setState({
             numSelected = #self.selection:Get(),
         })
+        if #self.selection:Get() == 0 then
+            getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
+        end
     end)
-    self:setState({})
+    UserInputService.InputBegan:Connect(function(input)
+        self:setState({
+            shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+                or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
+            controlDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftControl)
+                or UserInputService:IsKeyDown(Enum.KeyCode.RightControl),
+        })
+    end)
+
+    self:setState({
+        dragging = false,
+        shiftDown = false,
+        controlDown = false,
+        hoveredButton = HoveredButtons.None,
+    })
 end
 
 function App:render()
+    local shiftClickActive = not self.state.dragging and self.state.shiftDown
+
     local emitters = {}
+    local emitterComponents = {}
     for _, selection in self.selection:Get() do
         if selection:IsA("ParticleEmitter") then
-            table.insert(
-                emitters,
-                Emitter({
-                    Name = selection.Name,
-                    ParticleEmitter = selection,
-                })
-            )
+            table.insert(emitters, selection)
         end
         for _, descendant in selection:GetDescendants() do
             if descendant:IsA("ParticleEmitter") then
-                table.insert(
-                    emitters,
-                    Emitter({
-                        Name = descendant.Name,
-                        ParticleEmitter = descendant,
-                    })
-                )
+                table.insert(emitters, descendant)
             end
         end
     end
+    for _, emitter in emitters do
+        table.insert(
+            emitterComponents,
+            Emitter({
+                Name = emitter.Name,
+                ParticleEmitter = emitter,
+                Dragging = self.state.dragging,
+                HoveredButton = self.state.hoveredButton,
+                ShiftClickActive = shiftClickActive,
+                SetDragging = function(bool)
+                    self:setState({
+                        dragging = bool,
+                    })
+                end,
+                SetHoveredButton = function(buttonName)
+                    self:setState({
+                        hoveredButton = buttonName,
+                    })
+                end,
+            })
+        )
+    end
 
-    local showUI: boolean = self.state.numSelected and self.state.numSelected > 0
+    local showUI: boolean = #emitterComponents > 0
 
     return React.createElement("ScreenGui", {}, {
-        MainWidget = showUI and Panel({}, emitters),
+        MainWidget = showUI and Panel({}, emitterComponents),
 
         -- Selection = Selection({}),
 

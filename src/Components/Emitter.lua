@@ -13,12 +13,19 @@ local ButtonWithLabel = require(script.Parent.SubComponents.ButtonWithLabel)
 export type Props = {
     Name: string,
     ParticleEmitter: ParticleEmitter,
+    Dragging: boolean,
+    SetDragging: () -> nil,
+    ShiftClickActive: boolean,
+    ControlDown: boolean,
+    SetHoveredButton: (string) -> nil,
+    HoveredButton: string,
 }
 export type EmitterLabelProps = {
     Name: string,
     Enabled: boolean,
     SetEnabled: () -> nil,
     LayoutOrder: number,
+    SetDragging: () -> nil,
 }
 
 local function EmitterLabel(props: Props)
@@ -91,12 +98,12 @@ end
 
 local function Emitter(props: Props)
     local emitterEnabled, setEmitterEnabled = React.useState(props.ParticleEmitter.Enabled)
-    local emitterPaused, setEmitterPaused = React.useState(props.ParticleEmitter.TimeScale == 0)
-
+    local muteButtons = not props.Dragging
     local layoutOrder = Incrementer.new()
     return React.createElement("ImageButton", {
         Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
         ImageTransparency = 1,
+        Interactable = muteButtons,
         AutomaticSize = Enum.AutomaticSize.XY,
         AnchorPoint = Vector2.new(1, 1),
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -142,12 +149,16 @@ local function Emitter(props: Props)
                 LayoutOrder = layoutOrder:Increment(),
                 Size = UDim2.new(1, 0, 0, 26),
             }, {
-                EmitButton = ButtonWithLabel({
+                EmitButtonAndLabel = ButtonWithLabel({
                     Icon = Icons.Emit,
+                    Muted = muteButtons,
                     LayoutOrder = layoutOrder:Increment(),
                     Enabled = false,
                     OnActivated = function(value)
                         props.ParticleEmitter:Emit(value)
+                    end,
+                    OnDragging = function(bool)
+                        props.SetDragging(bool)
                     end,
                 }),
 
@@ -173,11 +184,16 @@ local function Emitter(props: Props)
                     -- }),
                     PlayButton = Button({
                         Icon = Icons.Play,
+                        Muted = muteButtons,
                         LayoutOrder = layoutOrder:Increment(),
                         Enabled = emitterEnabled,
+                        ShiftClickActive = props.ShiftClickActive,
                         OnActivated = function()
                             props.ParticleEmitter.Enabled = not emitterEnabled
                             setEmitterEnabled(not emitterEnabled)
+                        end,
+                        SetHoveredButton = function()
+                            props.SetHoveredButton("Play")
                         end,
                     }),
                     -- PauseButton = Button({
@@ -191,10 +207,15 @@ local function Emitter(props: Props)
                     -- }),
                     ClearButton = Button({
                         Icon = Icons.Clear,
+                        Muted = muteButtons,
                         LayoutOrder = layoutOrder:Increment(),
                         Enabled = false,
+                        ShiftClickActive = props.ShiftClickActive,
                         OnActivated = function()
                             props.ParticleEmitter:Clear()
+                        end,
+                        SetHoveredButton = function()
+                            props.SetHoveredButton("Play")
                         end,
                     }),
 

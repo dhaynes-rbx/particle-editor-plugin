@@ -12,7 +12,9 @@ export type Props = {
     Icon: string,
     LayoutOrder: number,
     Enabled: boolean,
+    Muted: boolean,
     OnActivated: () -> nil,
+    Size: UDim2,
 }
 
 local function Button(props: Props)
@@ -25,19 +27,21 @@ local function Button(props: Props)
         BorderSizePixel = 0,
         LayoutOrder = props.LayoutOrder,
         Position = props.Position or UDim2.fromScale(0, 0),
-        Size = UDim2.fromOffset(20, 20),
+        Size = props.Size or UDim2.fromOffset(20, 20),
     }, {
         button = React.createElement("ImageButton", {
-            Image = props.Icon,
-            ImageTransparency = 0,
-            ImageColor3 = Color3.new(0, 0, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Color3.fromRGB(255, 0, 4),
             BackgroundTransparency = 1,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
             BorderSizePixel = 0,
+            Image = props.Icon,
+            ImageColor3 = Color3.new(0, 0, 0),
+            ImageTransparency = 0,
+            Interactable = props.Muted,
             Position = UDim2.fromScale(0, 0.5),
             Size = UDim2.fromScale(1, 1),
+
             [ReactRoblox.Event.Activated] = function()
                 props.OnActivated()
             end,
