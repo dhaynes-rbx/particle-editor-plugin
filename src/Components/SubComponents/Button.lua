@@ -15,14 +15,17 @@ export type Props = {
     Muted: boolean,
     OnActivated: () -> nil,
     Size: UDim2,
+    ShiftClickActive: boolean,
+    SetHoveredButton: (string) -> nil,
 }
 
 local function Button(props: Props)
     local hover, setHover = React.useState(false)
+    local isHoveredOrShiftEnabled = hover or props.ShiftClickActive
     return React.createElement("Frame", {
         -- AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = (hover or props.Enabled) and 0.75 or 1,
+        BackgroundTransparency = (isHoveredOrShiftEnabled or props.Enabled) and 0.75 or 1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         BorderSizePixel = 0,
         LayoutOrder = props.LayoutOrder,
@@ -47,9 +50,11 @@ local function Button(props: Props)
             end,
             [ReactRoblox.Event.MouseEnter] = function()
                 setHover(true)
+                props.SetHoveredButton(true)
             end,
             [ReactRoblox.Event.MouseLeave] = function()
                 setHover(false)
+                props.SetHoveredButton(false)
             end,
         }, {
             aspectRatio = React.createElement("UIAspectRatioConstraint", {

@@ -12,7 +12,7 @@ local App = React.Component:extend("PluginGui")
 
 local HoveredButtons = {
     Play = "Play",
-    Reset = "Reset",
+    Clear = "Clear",
     Emit = "Emit",
     None = "None",
 }
@@ -36,15 +36,19 @@ function App:init()
         self:setState({
             shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
                 or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
-            controlDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftControl)
-                or UserInputService:IsKeyDown(Enum.KeyCode.RightControl),
+        })
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        self:setState({
+            shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+                or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
         })
     end)
 
     self:setState({
         dragging = false,
         shiftDown = false,
-        controlDown = false,
+        -- controlDown = false,
         hoveredButton = HoveredButtons.None,
     })
 end
@@ -64,30 +68,42 @@ function App:render()
             end
         end
     end
-    for _, emitter in emitters do
-        table.insert(
-            emitterComponents,
-            Emitter({
-                Name = emitter.Name,
-                ParticleEmitter = emitter,
-                Dragging = self.state.dragging,
-                HoveredButton = self.state.hoveredButton,
-                ShiftClickActive = shiftClickActive,
-                SetDragging = function(bool)
-                    self:setState({
-                        dragging = bool,
-                    })
-                end,
-                SetHoveredButton = function(buttonName)
-                    self:setState({
-                        hoveredButton = buttonName,
-                    })
-                end,
-            })
-        )
+    for i, emitter in emitters do
+        emitterComponents[emitter:GetFullName() .. i] = Emitter({
+            Name = emitter.Name,
+            ParticleEmitter = emitter,
+            Dragging = self.state.dragging,
+            HoveredButton = self.state.hoveredButton,
+            ShiftClickActive = shiftClickActive,
+            OnShiftClickPlay = function(enabled)
+                for _, e in emitters do
+                    e.Enabled = enabled
+                end
+            end,
+            OnShiftClickClear = function()
+                for _, e in emitters do
+                    e:Clear()
+                end
+            end,
+            OnShiftClickEmit = function()
+                for _, e in emitters do
+                    e:Emit(e:GetAttribute("Emit"))
+                end
+            end,
+            SetDragging = function(bool)
+                self:setState({
+                    dragging = bool,
+                })
+            end,
+            SetHoveredButton = function(buttonName)
+                self:setState({
+                    hoveredButton = buttonName,
+                })
+            end,
+        })
     end
 
-    local showUI: boolean = #emitterComponents > 0
+    local showUI: boolean = #Dash.keys(emitterComponents) > 0
 
     return React.createElement("ScreenGui", {}, {
         MainWidget = showUI and Panel({}, emitterComponents),

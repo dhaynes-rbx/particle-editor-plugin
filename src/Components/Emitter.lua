@@ -10,16 +10,6 @@ local Icons = require(Root.Icons)
 local Button = require(script.Parent.SubComponents.Button)
 local ButtonWithLabel = require(script.Parent.SubComponents.ButtonWithLabel)
 
-export type Props = {
-    Name: string,
-    ParticleEmitter: ParticleEmitter,
-    Dragging: boolean,
-    SetDragging: () -> nil,
-    ShiftClickActive: boolean,
-    ControlDown: boolean,
-    SetHoveredButton: (string) -> nil,
-    HoveredButton: string,
-}
 export type EmitterLabelProps = {
     Name: string,
     Enabled: boolean,
@@ -84,6 +74,7 @@ local function EmitterLabel(props: Props)
                 OnActivated = function()
                     Selection:Set({ props.ParticleEmitter })
                 end,
+                SetHoveredButton = function() end,
             }),
 
             uIListLayout = React.createElement("UIListLayout", {
@@ -96,10 +87,27 @@ local function EmitterLabel(props: Props)
     })
 end
 
+export type Props = {
+    Name: string,
+    ParticleEmitter: ParticleEmitter,
+    Dragging: boolean,
+    SetDragging: () -> nil,
+    ShiftClickActive: boolean,
+    SetHoveredButton: (string) -> nil,
+    HoveredButton: string,
+    OnShiftClickPlay: () -> nil,
+    OnShiftClickCLear: () -> nil,
+}
+
 local function Emitter(props: Props)
     local emitterEnabled, setEmitterEnabled = React.useState(props.ParticleEmitter.Enabled)
     local muteButtons = not props.Dragging
     local layoutOrder = Incrementer.new()
+
+    React.useEffect(function()
+        setEmitterEnabled(props.ParticleEmitter.Enabled)
+    end, { props.ParticleEmitter.Enabled })
+
     return React.createElement("ImageButton", {
         Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
         ImageTransparency = 1,
@@ -110,7 +118,6 @@ local function Emitter(props: Props)
         BackgroundTransparency = 1,
         BorderColor3 = Color3.fromRGB(0, 0, 0),
         Position = UDim2.fromScale(1, 1),
-        -- Size = UDim2.new(1, 20, 0, 20),
         Size = UDim2.fromScale(1, 0),
     }, {
 
@@ -151,14 +158,24 @@ local function Emitter(props: Props)
             }, {
                 EmitButtonAndLabel = ButtonWithLabel({
                     Icon = Icons.Emit,
+                    ParticleEmitter = props.ParticleEmitter,
+                    Attribute = "Emit",
                     Muted = muteButtons,
                     LayoutOrder = layoutOrder:Increment(),
                     Enabled = false,
-                    OnActivated = function(value)
-                        props.ParticleEmitter:Emit(value)
+                    OnActivated = function()
+                        if props.ShiftClickActive then
+                            props.OnShiftClickEmit()
+                        else
+                            props.ParticleEmitter:Emit(props.ParticleEmitter:GetAttribute("Emit"))
+                        end
                     end,
                     OnDragging = function(bool)
                         props.SetDragging(bool)
+                    end,
+                    ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Emit",
+                    SetHoveredButton = function(bool)
+                        props.SetHoveredButton(bool and "Emit" or "None")
                     end,
                 }),
 
@@ -187,13 +204,17 @@ local function Emitter(props: Props)
                         Muted = muteButtons,
                         LayoutOrder = layoutOrder:Increment(),
                         Enabled = emitterEnabled,
-                        ShiftClickActive = props.ShiftClickActive,
+                        ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Play",
                         OnActivated = function()
-                            props.ParticleEmitter.Enabled = not emitterEnabled
+                            if props.ShiftClickActive then
+                                props.OnShiftClickPlay(not emitterEnabled)
+                            else
+                                props.ParticleEmitter.Enabled = not emitterEnabled
+                            end
                             setEmitterEnabled(not emitterEnabled)
                         end,
-                        SetHoveredButton = function()
-                            props.SetHoveredButton("Play")
+                        SetHoveredButton = function(bool)
+                            props.SetHoveredButton(bool and "Play" or "None")
                         end,
                     }),
                     -- PauseButton = Button({
@@ -210,12 +231,16 @@ local function Emitter(props: Props)
                         Muted = muteButtons,
                         LayoutOrder = layoutOrder:Increment(),
                         Enabled = false,
-                        ShiftClickActive = props.ShiftClickActive,
+                        ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Clear",
                         OnActivated = function()
-                            props.ParticleEmitter:Clear()
+                            if props.ShiftClickActive then
+                                props.OnShiftClickClear()
+                            else
+                                props.ParticleEmitter:Clear()
+                            end
                         end,
-                        SetHoveredButton = function()
-                            props.SetHoveredButton("Play")
+                        SetHoveredButton = function(bool)
+                            props.SetHoveredButton(bool and "Clear" or "None")
                         end,
                     }),
 

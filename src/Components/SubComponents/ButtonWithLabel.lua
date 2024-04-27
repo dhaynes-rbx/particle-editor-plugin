@@ -56,15 +56,19 @@ end
 
 export type Props = {
     Icon: string,
+    ParticleEmitter: ParticleEmitter,
+    Attribute: string,
     LayoutOrder: number,
     Enabled: boolean,
     Muted: boolean,
     OnActivated: () -> nil,
     OnDragging: () -> nil,
+    SetHoveredButton: (string) -> nil,
+    OnShiftClick: (boolean) -> nil,
 }
 
 function ButtonWithLabel(props: Props)
-    local labelValue, setLabelValue = React.useState(100)
+    local labelValue, setLabelValue = React.useState(props.ParticleEmitter:GetAttribute(props.Attribute) or 100)
     local dragging: boolean, setDragging = React.useState(false)
     local dragConnection: RBXScriptConnection, setDragConnection = React.useState(nil)
     local selectedRibbonTool, setSelectedRibbonTool = React.useState(getfenv(0).plugin:GetSelectedRibbonTool())
@@ -110,10 +114,10 @@ function ButtonWithLabel(props: Props)
                 dragDeltaX = newDragDeltaX
 
                 setLabelValue(math.clamp(labelValue + dragDeltaX, 0, 10000))
-                print("Dragging:", newDragDeltaX)
             end))
             props.OnDragging(true)
         else
+            props.ParticleEmitter:SetAttribute(props.Attribute, labelValue)
             thisPlugin:SelectRibbonTool(selectedRibbonTool, UDim2.new())
             setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
         end
@@ -149,7 +153,11 @@ function ButtonWithLabel(props: Props)
             Interactable = props.Muted,
             Enabled = props.Enabled,
             OnActivated = function()
-                props.OnActivated(labelValue)
+                props.OnActivated()
+            end,
+            ShiftClickActive = props.ShiftClickActive,
+            SetHoveredButton = function(name)
+                props.SetHoveredButton(name)
             end,
         }),
 
