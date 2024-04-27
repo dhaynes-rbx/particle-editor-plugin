@@ -4,7 +4,7 @@ local Packages = Root.Packages
 local React = require(Packages.React)
 local Dash = require(Packages.Dash)
 
-export type Props = {}
+type Props = {}
 
 local function Panel(props: Props)
     local ephemerals = {

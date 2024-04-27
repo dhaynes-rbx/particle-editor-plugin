@@ -8,7 +8,7 @@ local Icons = require(Root.Icons)
 
 local enabledTransparency = 0.75
 
-export type Props = {
+type Props = {
     Icon: string,
     LayoutOrder: number,
     Enabled: boolean,
@@ -17,11 +17,19 @@ export type Props = {
     Size: UDim2,
     ShiftClickActive: boolean,
     SetHoveredButton: (string) -> nil,
+    OnHovered: (boolean) -> nil,
 }
 
 local function Button(props: Props)
     local hover, setHover = React.useState(false)
     local isHoveredOrShiftEnabled = hover or props.ShiftClickActive
+
+    React.useEffect(function()
+        if props.OnHovered then
+            props.OnHovered(hover)
+        end
+    end, { hover })
+
     return React.createElement("Frame", {
         -- AnchorPoint = Vector2.new(1, 0),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),

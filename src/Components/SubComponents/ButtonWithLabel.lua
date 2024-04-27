@@ -12,7 +12,7 @@ local Incrementer = require(script.Parent.Parent.Parent.Incrementer)
 
 local enabledTransparency = 0.75
 
-export type HotSpotButtonProps = {
+type HotSpotButtonProps = {
     Position: UDim2,
     SetDragging: (boolean) -> nil,
 }
@@ -117,7 +117,6 @@ function ButtonWithLabel(props: Props)
             end))
             props.OnDragging(true)
         else
-            props.ParticleEmitter:SetAttribute(props.Attribute, labelValue)
             thisPlugin:SelectRibbonTool(selectedRibbonTool, UDim2.new())
             setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
         end
@@ -131,6 +130,10 @@ function ButtonWithLabel(props: Props)
             props.OnDragging(false)
         end
     end, { dragging })
+
+    React.useEffect(function()
+        props.ParticleEmitter:SetAttribute(props.Attribute, labelValue)
+    end, { labelValue })
 
     return React.createElement("Frame", {
         AnchorPoint = Vector2.new(1, 0),
