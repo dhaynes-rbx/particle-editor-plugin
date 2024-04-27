@@ -29,9 +29,18 @@ local function Emitter(props: Props)
     local muteButtons = not props.Dragging
     local layoutOrder = Incrementer.new()
 
-    -- React.useEffect(function()
-    -- setEmitterEnabled(props.ParticleEmitter.Enabled)
-    -- end, { props.ParticleEmitter.Enabled })
+    React.useEffect(function()
+        props.ParticleEmitter.Enabled = previewing or emitterEnabled
+        -- if not previewing and not emitterEnabled then
+        --     props.ParticleEmitter:Clear()
+        -- end
+    end, { previewing, emitterEnabled })
+
+    React.useEffect(function()
+        if not previewing then
+            setEmitterEnabled(props.ParticleEmitter.Enabled)
+        end
+    end, { props.ParticleEmitter.Enabled })
 
     return React.createElement("ImageButton", {
         Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
