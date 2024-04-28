@@ -31,6 +31,7 @@ local function Emitter(props: Props)
     local layoutOrder = Incrementer.new()
 
     React.useEffect(function()
+        props.ParticleEmitter:SetAttribute("Visible", true)
         return function()
             props.ParticleEmitter:SetAttribute("Visible", nil)
         end
@@ -46,13 +47,9 @@ local function Emitter(props: Props)
         end
     end, { props.ParticleEmitter.Enabled })
 
-    -- React.useEffect(function()
-    --     local showEmitterUI = false
-    --     if props.ParticleEmitter:GetAttribute("Visible") == false then
-    --         showEmitterUI = false
-    --     end
-    --     setVisible(showEmitterUI)
-    -- end, { props.ParticleEmitter:GetAttribute("Visible") })
+    React.useEffect(function()
+        setVisible(props.ParticleEmitter:GetAttribute("Visible"))
+    end, { props.ParticleEmitter:GetAttribute("Visible") })
 
     return visible
         and React.createElement("ImageButton", {

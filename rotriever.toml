@@ -1,5 +1,5 @@
 [package]
-name = "FactoriesPlugin"
+name = "ParticleEditorPlugin"
 version = "0.1.0"
 authors = ["Dustin Haynes <dhaynes@roblox.com>"]
 license = "Proprietary"

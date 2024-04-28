@@ -29,8 +29,11 @@ function App:init()
             numSelected = #self.selection:Get(),
         })
         if #self.selection:Get() == 0 then
-            getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
+            -- getfenv(0).plugin:Activate(false)
+            -- getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
         end
+        -- getfenv(0).plugin:Activate(false)
+        -- getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
     end)
     UserInputService.InputBegan:Connect(function(input)
         self:setState({
@@ -81,12 +84,16 @@ function App:render()
             end,
             OnShiftClickClear = function()
                 for _, e in emitters do
-                    e:Clear()
+                    if e:GetAttribute("Visible") then
+                        e:Clear()
+                    end
                 end
             end,
             OnShiftClickEmit = function()
                 for _, e in emitters do
-                    e:Emit(e:GetAttribute("Emit"))
+                    if e:GetAttribute("Visible") then
+                        e:Emit(e:GetAttribute("Emit"))
+                    end
                 end
             end,
             SetDragging = function(bool)
@@ -100,9 +107,6 @@ function App:render()
                 })
             end,
             OnDeselect = function(selection)
-                local newSelection = {}
-                print("Deselect")
-
                 self:setState({ numSelected = #self.selection:Get() })
             end,
         })
