@@ -21,7 +21,8 @@ function App:init()
     self.selection = game:GetService("Selection")
     self.selection.SelectionChanged:Connect(function()
         if #self.selection:Get() > 0 then
-            if not self.selection:Get()[#self.selection:Get()]:FindFirstAncestorOfClass("Workspace") then
+            local selection = self.selection:Get()
+            if not selection[#selection]:FindFirstAncestorOfClass("Workspace") then
                 return
             end
         end
@@ -30,22 +31,25 @@ function App:init()
         })
         if #self.selection:Get() == 0 then
             -- getfenv(0).plugin:Activate(false)
-            -- getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
         end
-        -- getfenv(0).plugin:Activate(false)
-        -- getfenv(0).plugin:SelectRibbonTool(Enum.RibbonTool.Select, UDim2.new())
+        local thisPlugin: Plugin = getfenv(0).plugin
+        thisPlugin:SelectRibbonTool("Select", UDim2.new())
     end)
-    UserInputService.InputBegan:Connect(function(input)
-        self:setState({
-            shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
-                or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
-        })
+    UserInputService.InputBegan:Connect(function(input: InputObject)
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            self:setState({
+                shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+                    or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
+            })
+        end
     end)
     UserInputService.InputEnded:Connect(function(input)
-        self:setState({
-            shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
-                or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
-        })
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            self:setState({
+                shiftDown = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+                    or UserInputService:IsKeyDown(Enum.KeyCode.RightShift),
+            })
+        end
     end)
 
     self:setState({
