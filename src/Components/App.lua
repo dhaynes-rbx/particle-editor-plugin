@@ -48,7 +48,6 @@ function App:init()
     self:setState({
         dragging = false,
         shiftDown = false,
-        -- controlDown = false,
         hoveredButton = HoveredButtons.None,
     })
 end
@@ -99,6 +98,12 @@ function App:render()
                 self:setState({
                     hoveredButton = buttonName,
                 })
+            end,
+            OnDeselect = function(selection)
+                local newSelection = {}
+                print("Deselect")
+
+                self:setState({ numSelected = #self.selection:Get() })
             end,
         })
     end

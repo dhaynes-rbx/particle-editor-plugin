@@ -66,6 +66,15 @@ local function EmitterLabel(props: Props)
             Size = UDim2.fromScale(1, 0),
         }, {
 
+            deselectButton = Button({
+                Icon = Icons.VisibleOn,
+                LayoutOrder = layoutOrder:Increment(),
+                Enabled = false,
+                OnActivated = function()
+                    props.OnDeselect(props.ParticleEmitter)
+                    props.ParticleEmitter:SetAttribute("Visible", false)
+                end,
+            }),
             findButton = Button({
                 Icon = Icons.Find,
                 LayoutOrder = layoutOrder:Increment(),
@@ -73,7 +82,6 @@ local function EmitterLabel(props: Props)
                 OnActivated = function()
                     Selection:Set({ props.ParticleEmitter })
                 end,
-                SetHoveredButton = function() end,
             }),
 
             uIListLayout = React.createElement("UIListLayout", {

@@ -58,11 +58,15 @@ local function Button(props: Props)
             end,
             [ReactRoblox.Event.MouseEnter] = function()
                 setHover(true)
-                props.SetHoveredButton(true)
+                if props.SetHoveredButton then
+                    props.SetHoveredButton(true)
+                end
             end,
             [ReactRoblox.Event.MouseLeave] = function()
                 setHover(false)
-                props.SetHoveredButton(false)
+                if props.SetHoveredButton then
+                    props.SetHoveredButton(false)
+                end
             end,
         }, {
             aspectRatio = React.createElement("UIAspectRatioConstraint", {
