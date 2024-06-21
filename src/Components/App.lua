@@ -32,8 +32,8 @@ function App:init()
         if #self.selection:Get() == 0 then
             -- getfenv(0).plugin:Activate(false)
         end
-        local thisPlugin: Plugin = getfenv(0).plugin
-        thisPlugin:SelectRibbonTool("Select", UDim2.new())
+        -- local thisPlugin: Plugin = getfenv(0).plugin
+        -- thisPlugin:SelectRibbonTool("Select", UDim2.new())
     end)
     UserInputService.InputBegan:Connect(function(input: InputObject)
         if input.UserInputType == Enum.UserInputType.Keyboard then

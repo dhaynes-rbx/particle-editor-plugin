@@ -83,7 +83,7 @@ function ButtonWithLabel(props: Props)
         local thisPlugin: Plugin = getfenv(0).plugin
 
         if dragging then
-            setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
+            -- setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
             thisPlugin:Activate(true)
             local mouse: PluginMouse = thisPlugin:GetMouse()
             mouse.Icon = "rbxasset://SystemCursors/SizeEW"
@@ -117,8 +117,9 @@ function ButtonWithLabel(props: Props)
             end))
             props.OnDragging(true)
         else
-            thisPlugin:SelectRibbonTool(selectedRibbonTool, UDim2.new())
-            setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
+            -- thisPlugin:Activate(false)
+            -- thisPlugin:SelectRibbonTool(selectedRibbonTool, UDim2.new())
+            -- setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
         end
 
         return function()
@@ -127,6 +128,12 @@ function ButtonWithLabel(props: Props)
             end
             thisPlugin:GetMouse().Icon = "rbxasset://SystemCursors/Arrow"
             thisPlugin:Activate(false)
+            -- print(
+            --     "Activated?",
+            --     thisPlugin:IsActivated(),
+            --     "With exclusive mouse?",
+            --     thisPlugin:IsActivatedWithExclusiveMouse()
+            -- )
             props.OnDragging(false)
         end
     end, { dragging })
