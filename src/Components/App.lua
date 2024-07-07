@@ -17,24 +17,25 @@ local HoveredButtons = {
     None = "None",
 }
 
+function resetRibbonTool(ribbonTool)
+    local thisPlugin: Plugin = getfenv(0).plugin
+    task.delay(0.01, function()
+        if thisPlugin:GetSelectedRibbonTool() == Enum.RibbonTool.None then
+            local tool = ribbonTool or Enum.RibbonTool.Select
+            thisPlugin:SelectRibbonTool(tool, UDim2.new())
+        end
+    end)
+end
+
 function App:init()
     self.selection = game:GetService("Selection")
-    self.selection.SelectionChanged:Connect(function()
-        if #self.selection:Get() > 0 then
-            local selection = self.selection:Get()
-            if not selection[#selection]:FindFirstAncestorOfClass("Workspace") then
-                return
-            end
-        end
+    self.selectionChangedConnection = self.selection.SelectionChanged:Connect(function()
         self:setState({
-            numSelected = #self.selection:Get(),
+            numSelected = 3,
         })
-        if #self.selection:Get() == 0 then
-            -- getfenv(0).plugin:Activate(false)
-        end
-        local thisPlugin: Plugin = getfenv(0).plugin
-        thisPlugin:SelectRibbonTool("Select", UDim2.new())
-    end)
+        resetRibbonTool(self.state.selectedTool)
+    end) :: RBXScriptConnection
+
     UserInputService.InputBegan:Connect(function(input: InputObject)
         if input.UserInputType == Enum.UserInputType.Keyboard then
             self:setState({
@@ -56,11 +57,14 @@ function App:init()
         dragging = false,
         shiftDown = false,
         hoveredButton = HoveredButtons.None,
+        selectedTool = Enum.RibbonTool.Select,
     })
 end
 
 function App:render()
     local shiftClickActive = not self.state.dragging and self.state.shiftDown
+
+    resetRibbonTool(self.state.selectedTool)
 
     local emitters = {}
     local emitterComponents = {}
@@ -134,6 +138,9 @@ end
 
 function App:componentWillUnmount()
     --Nothing
+    if self.selectionChangedConnection then
+        self.selectionChangedConnection:Disconnect()
+    end
 end
 
 return App
