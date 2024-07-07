@@ -33,9 +33,12 @@ function App:init()
         self:setState({
             numSelected = 3,
         })
-        resetRibbonTool(self.state.selectedTool)
-    end) :: RBXScriptConnection
-
+        if #self.selection:Get() == 0 then
+            -- getfenv(0).plugin:Activate(false)
+        end
+        -- local thisPlugin: Plugin = getfenv(0).plugin
+        -- thisPlugin:SelectRibbonTool("Select", UDim2.new())
+    end)
     UserInputService.InputBegan:Connect(function(input: InputObject)
         if input.UserInputType == Enum.UserInputType.Keyboard then
             self:setState({
