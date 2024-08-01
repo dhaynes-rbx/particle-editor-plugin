@@ -18,13 +18,13 @@ local HoveredButtons = {
 }
 
 function resetRibbonTool(ribbonTool)
-    local thisPlugin: Plugin = getfenv(0).plugin
-    task.delay(0.01, function()
-        if thisPlugin:GetSelectedRibbonTool() == Enum.RibbonTool.None then
-            local tool = ribbonTool or Enum.RibbonTool.Select
-            thisPlugin:SelectRibbonTool(tool, UDim2.new())
-        end
-    end)
+    -- local thisPlugin: Plugin = getfenv(0).plugin
+    -- task.delay(0.01, function()
+    --     if thisPlugin:GetSelectedRibbonTool() == Enum.RibbonTool.None then
+    --         local tool = ribbonTool or Enum.RibbonTool.Select
+    --         thisPlugin:SelectRibbonTool(tool, UDim2.new())
+    --     end
+    -- end)
 end
 
 function App:init()
@@ -33,9 +33,9 @@ function App:init()
         self:setState({
             numSelected = 3,
         })
-        if #self.selection:Get() == 0 then
-            -- getfenv(0).plugin:Activate(false)
-        end
+        -- if #self.selection:Get() == 0 then
+        --     -- getfenv(0).plugin:Activate(false)
+        -- end
         -- local thisPlugin: Plugin = getfenv(0).plugin
         -- thisPlugin:SelectRibbonTool("Select", UDim2.new())
     end)
@@ -81,8 +81,8 @@ function App:render()
             end
         end
     end
-    for i, emitter in emitters do
-        emitterComponents[emitter:GetFullName() .. i] = Emitter({
+    for i, emitter: ParticleEmitter in emitters do
+        emitterComponents[emitter.Name .. emitter:GetDebugId() .. i] = Emitter({
             Name = emitter.Name,
             ParticleEmitter = emitter,
             Dragging = self.state.dragging,
