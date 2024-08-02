@@ -116,10 +116,6 @@ function ButtonWithLabel(props: Props)
                 setLabelValue(math.clamp(labelValue + dragDeltaX, 0, 10000))
             end))
             props.OnDragging(true)
-        else
-            -- thisPlugin:Activate(false)
-            -- thisPlugin:SelectRibbonTool(selectedRibbonTool, UDim2.new())
-            -- setSelectedRibbonTool(thisPlugin:GetSelectedRibbonTool())
         end
 
         return function()
@@ -128,12 +124,7 @@ function ButtonWithLabel(props: Props)
             end
             thisPlugin:GetMouse().Icon = "rbxasset://SystemCursors/Arrow"
             thisPlugin:Activate(false)
-            -- print(
-            --     "Activated?",
-            --     thisPlugin:IsActivated(),
-            --     "With exclusive mouse?",
-            --     thisPlugin:IsActivatedWithExclusiveMouse()
-            -- )
+
             props.OnDragging(false)
         end
     end, { dragging })

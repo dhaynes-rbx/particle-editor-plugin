@@ -21,6 +21,7 @@ type Props = {
     HoveredButton: string,
     OnShiftClickPlay: () -> nil,
     OnShiftClickCLear: () -> nil,
+    SetSelection: (Instance) -> nil,
 }
 
 local function Emitter(props: Props)
@@ -51,160 +52,163 @@ local function Emitter(props: Props)
         setVisible(props.ParticleEmitter:GetAttribute("Visible"))
     end, { props.ParticleEmitter:GetAttribute("Visible") })
 
-    return visible
-        and React.createElement("ImageButton", {
-            Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
-            ImageTransparency = 1,
-            Interactable = muteButtons,
-            AutomaticSize = Enum.AutomaticSize.XY,
-            AnchorPoint = Vector2.new(1, 1),
-            BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-            BackgroundTransparency = 1,
+    return React.createElement("ImageButton", {
+        Image = "rbxasset://textures/ui/GuiImagePlaceholder.png",
+        ImageTransparency = 1,
+        Interactable = muteButtons,
+        AutomaticSize = Enum.AutomaticSize.XY,
+        AnchorPoint = Vector2.new(1, 1),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        BorderColor3 = Color3.fromRGB(0, 0, 0),
+        Position = UDim2.fromScale(1, 1),
+        Size = UDim2.fromScale(1, 0),
+    }, {
+
+        EmitterContents = React.createElement("Frame", {
+            AutomaticSize = Enum.AutomaticSize.Y,
+            BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+            BackgroundTransparency = 0.9,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
-            Position = UDim2.fromScale(1, 1),
-            Size = UDim2.fromScale(1, 0),
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 0, 30),
         }, {
+            uICorner = React.createElement("UICorner", {
+                CornerRadius = UDim.new(0, 2),
+            }),
+            uIPadding = React.createElement("UIPadding", {
+                PaddingLeft = UDim.new(0, 4),
+                PaddingRight = UDim.new(0, 4),
+            }),
+            uIListLayout = React.createElement("UIListLayout", {
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 4),
+            }),
 
-            EmitterContents = React.createElement("Frame", {
-                AutomaticSize = Enum.AutomaticSize.Y,
-                BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-                BackgroundTransparency = 0.9,
-                BorderColor3 = Color3.fromRGB(0, 0, 0),
+            EmitterLabel = EmitterLabel({
+                Name = props.Name,
+                ParticleEmitter = props.ParticleEmitter,
+                Enabled = emitterEnabled,
+
+                LayoutOrder = layoutOrder:Increment(),
+                SetEnabled = function() end,
+                OnSetVisibility = function(emitterInstance)
+                    props.OnSetVisibility(emitterInstance)
+                end,
+                Visible = visible,
+                SetSelection = function(emitterInstance)
+                    props.SetSelection(emitterInstance)
+                end,
+            }),
+
+            Buttons = visible and React.createElement("Frame", {
+                BackgroundTransparency = 1,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 30),
+                LayoutOrder = layoutOrder:Increment(),
+                Size = UDim2.new(1, 0, 0, 26),
             }, {
-                uICorner = React.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 2),
-                }),
-                uIPadding = React.createElement("UIPadding", {
-                    PaddingLeft = UDim.new(0, 4),
-                    PaddingRight = UDim.new(0, 4),
-                }),
-                uIListLayout = React.createElement("UIListLayout", {
-                    SortOrder = Enum.SortOrder.LayoutOrder,
-                    Padding = UDim.new(0, 4),
-                }),
-
-                EmitterLabel = EmitterLabel({
-                    Name = props.Name,
+                EmitButtonAndLabel = ButtonWithLabel({
+                    Icon = Icons.Emit,
                     ParticleEmitter = props.ParticleEmitter,
-                    Enabled = emitterEnabled,
-
+                    Attribute = "Emit",
+                    Muted = muteButtons,
                     LayoutOrder = layoutOrder:Increment(),
-                    SetEnabled = function() end,
-                    OnDeselect = function(selection)
-                        props.OnDeselect(selection)
+                    Enabled = false,
+                    OnActivated = function()
+                        if props.ShiftClickActive then
+                            props.OnShiftClickEmit()
+                        else
+                            props.ParticleEmitter:Emit(props.ParticleEmitter:GetAttribute("Emit"))
+                        end
+                    end,
+                    OnDragging = function(bool)
+                        props.SetDragging(bool)
+                    end,
+                    ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Emit",
+                    SetHoveredButton = function(bool)
+                        props.SetHoveredButton(bool and "Emit" or "None")
                     end,
                 }),
 
-                Buttons = React.createElement("Frame", {
+                ButtonsRow = React.createElement("Frame", {
+                    AutomaticSize = Enum.AutomaticSize.Y,
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                     BackgroundTransparency = 1,
+                    BorderColor3 = Color3.fromRGB(0, 0, 0),
                     BorderSizePixel = 0,
                     LayoutOrder = layoutOrder:Increment(),
-                    Size = UDim2.new(1, 0, 0, 26),
+                    Size = UDim2.new(1, 0, 1, 0),
                 }, {
-                    EmitButtonAndLabel = ButtonWithLabel({
-                        Icon = Icons.Emit,
-                        ParticleEmitter = props.ParticleEmitter,
-                        Attribute = "Emit",
+                    -- visibilityButton = Button({
+                    --     Icon = emitterVisible and Icons.VisibleOn or Icons.VisibleOff,
+                    --     LayoutOrder = layoutOrder:Increment(),
+                    --     Enabled = emitterVisible,
+                    --     OnActivated = function()
+                    --         props.ParticleEmitter.Enabled = not emitterEnabled
+                    --         props.ParticleEmitter:Clear()
+                    --         setEmitterEnabled(not emitterEnabled)
+                    --         setEmitterVisible(not emitterEnabled)
+                    --     end,
+                    -- }),
+                    PlayButton = Button({
+                        Icon = Icons.Play,
+                        Muted = muteButtons,
+                        LayoutOrder = layoutOrder:Increment(),
+                        Enabled = emitterEnabled,
+                        ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Play",
+                        OnActivated = function()
+                            if props.ShiftClickActive then
+                                props.OnShiftClickPlay(not emitterEnabled)
+                            else
+                                props.ParticleEmitter.Enabled = not emitterEnabled
+                            end
+                            setEmitterEnabled(not emitterEnabled)
+                        end,
+                        SetHoveredButton = function(bool)
+                            props.SetHoveredButton(bool and "Play" or "None")
+                        end,
+                        OnHovered = function(hovered)
+                            setPreviewing(hovered)
+                        end,
+                    }),
+                    -- PauseButton = Button({
+                    --     Icon = Icons.Pause,
+                    --     LayoutOrder = layoutOrder:Increment(),
+                    --     Enabled = emitterPaused,
+                    --     OnActivated = function()
+                    --         props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
+                    --         setEmitterPaused(not emitterPaused)
+                    --     end,
+                    -- }),
+                    ClearButton = Button({
+                        Icon = Icons.Clear,
                         Muted = muteButtons,
                         LayoutOrder = layoutOrder:Increment(),
                         Enabled = false,
+                        ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Clear",
                         OnActivated = function()
                             if props.ShiftClickActive then
-                                props.OnShiftClickEmit()
+                                props.OnShiftClickClear()
                             else
-                                props.ParticleEmitter:Emit(props.ParticleEmitter:GetAttribute("Emit"))
+                                props.ParticleEmitter:Clear()
                             end
                         end,
-                        OnDragging = function(bool)
-                            props.SetDragging(bool)
-                        end,
-                        ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Emit",
                         SetHoveredButton = function(bool)
-                            props.SetHoveredButton(bool and "Emit" or "None")
+                            props.SetHoveredButton(bool and "Clear" or "None")
                         end,
                     }),
 
-                    ButtonsRow = React.createElement("Frame", {
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        BackgroundTransparency = 1,
-                        BorderColor3 = Color3.fromRGB(0, 0, 0),
-                        BorderSizePixel = 0,
-                        LayoutOrder = layoutOrder:Increment(),
-                        Size = UDim2.new(1, 0, 1, 0),
-                    }, {
-                        -- visibilityButton = Button({
-                        --     Icon = emitterVisible and Icons.VisibleOn or Icons.VisibleOff,
-                        --     LayoutOrder = layoutOrder:Increment(),
-                        --     Enabled = emitterVisible,
-                        --     OnActivated = function()
-                        --         props.ParticleEmitter.Enabled = not emitterEnabled
-                        --         props.ParticleEmitter:Clear()
-                        --         setEmitterEnabled(not emitterEnabled)
-                        --         setEmitterVisible(not emitterEnabled)
-                        --     end,
-                        -- }),
-                        PlayButton = Button({
-                            Icon = Icons.Play,
-                            Muted = muteButtons,
-                            LayoutOrder = layoutOrder:Increment(),
-                            Enabled = emitterEnabled,
-                            ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Play",
-                            OnActivated = function()
-                                if props.ShiftClickActive then
-                                    props.OnShiftClickPlay(not emitterEnabled)
-                                else
-                                    props.ParticleEmitter.Enabled = not emitterEnabled
-                                end
-                                setEmitterEnabled(not emitterEnabled)
-                            end,
-                            SetHoveredButton = function(bool)
-                                props.SetHoveredButton(bool and "Play" or "None")
-                            end,
-                            OnHovered = function(hovered)
-                                setPreviewing(hovered)
-                            end,
-                        }),
-                        -- PauseButton = Button({
-                        --     Icon = Icons.Pause,
-                        --     LayoutOrder = layoutOrder:Increment(),
-                        --     Enabled = emitterPaused,
-                        --     OnActivated = function()
-                        --         props.ParticleEmitter.TimeScale = emitterPaused and 1 or 0
-                        --         setEmitterPaused(not emitterPaused)
-                        --     end,
-                        -- }),
-                        ClearButton = Button({
-                            Icon = Icons.Clear,
-                            Muted = muteButtons,
-                            LayoutOrder = layoutOrder:Increment(),
-                            Enabled = false,
-                            ShiftClickActive = props.ShiftClickActive and props.HoveredButton == "Clear",
-                            OnActivated = function()
-                                if props.ShiftClickActive then
-                                    props.OnShiftClickClear()
-                                else
-                                    props.ParticleEmitter:Clear()
-                                end
-                            end,
-                            SetHoveredButton = function(bool)
-                                props.SetHoveredButton(bool and "Clear" or "None")
-                            end,
-                        }),
-
-                        uIListLayout = React.createElement("UIListLayout", {
-                            FillDirection = Enum.FillDirection.Horizontal,
-                            HorizontalAlignment = Enum.HorizontalAlignment.Left,
-                            Padding = UDim.new(0, 4),
-                            VerticalAlignment = Enum.VerticalAlignment.Center,
-                            SortOrder = Enum.SortOrder.LayoutOrder,
-                        }),
+                    uIListLayout = React.createElement("UIListLayout", {
+                        FillDirection = Enum.FillDirection.Horizontal,
+                        HorizontalAlignment = Enum.HorizontalAlignment.Left,
+                        Padding = UDim.new(0, 4),
+                        VerticalAlignment = Enum.VerticalAlignment.Center,
+                        SortOrder = Enum.SortOrder.LayoutOrder,
                     }),
                 }),
+            }),
 
-                --[[ Properties
+            --[[ Properties
             
             Properties = React.createElement("Frame", {
                 AutomaticSize = Enum.AutomaticSize.Y,
@@ -279,7 +283,7 @@ local function Emitter(props: Props)
                 }),
                 --]]
 
-                --[[ TimeScale
+            --[[ TimeScale
                     -- TimeScale = React.createElement("Frame", {
                         --     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         --     BackgroundTransparency = 1,
@@ -357,10 +361,10 @@ local function Emitter(props: Props)
                     PaddingRight = UDim.new(0, 4),
                 }),
                 ]]
-                -- }),
-                --]]
-            }),
-        })
+            -- }),
+            --]]
+        }),
+    })
 end
 
 return function(props: Props)

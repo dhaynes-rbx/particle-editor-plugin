@@ -8,6 +8,7 @@ local Incrementer = require(Root.Incrementer)
 local Icons = require(Root.Icons)
 
 local Button = require(Root.Components.SubComponents.Button)
+local Constants = require(Root.Constants)
 
 type Props = {
     Name: string,
@@ -15,12 +16,18 @@ type Props = {
     SetEnabled: () -> nil,
     LayoutOrder: number,
     SetDragging: () -> nil,
+    OnSetVisibility: () -> nil,
+    ParticleEmitter: ParticleEmitter,
+    Visible: boolean,
+    SetSelection: (Instance) -> nil,
 }
 
 local function EmitterLabel(props: Props)
     local hover, setHover = React.useState(false)
     local labelSizeX = hover and 0.8 or 1
     local layoutOrder = Incrementer.new()
+    local visibleIcon = props.Visible and Icons.VisibleOn or Icons.VisibleOff
+    local textTransparency = props.Visible and 0 or 0.5
     return React.createElement("Frame", {
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
         BackgroundTransparency = 1,
@@ -48,6 +55,7 @@ local function EmitterLabel(props: Props)
             TextSize = 14,
             TextTruncate = Enum.TextTruncate.AtEnd,
             TextXAlignment = Enum.TextXAlignment.Left,
+            TextTransparency = textTransparency,
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
             BackgroundTransparency = 1,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -55,7 +63,7 @@ local function EmitterLabel(props: Props)
             LayoutOrder = layoutOrder:Increment(),
             Size = UDim2.fromScale(labelSizeX, 1),
             [ReactRoblox.Event.Activated] = function()
-                Selection:Set({ props.ParticleEmitter })
+                print("Change name")
             end,
         }),
         buttonFrame = hover and React.createElement("Frame", {
@@ -67,12 +75,16 @@ local function EmitterLabel(props: Props)
         }, {
 
             deselectButton = Button({
-                Icon = Icons.VisibleOn,
+                Icon = visibleIcon,
                 LayoutOrder = layoutOrder:Increment(),
                 Enabled = false,
                 OnActivated = function()
-                    props.OnDeselect(props.ParticleEmitter)
-                    props.ParticleEmitter:SetAttribute("Visible", false)
+                    props.OnSetVisibility(props.ParticleEmitter)
+                    if props.ParticleEmitter:GetAttribute(Constants.Visible) then
+                        props.ParticleEmitter:SetAttribute(Constants.Visible, false)
+                    else
+                        props.ParticleEmitter:SetAttribute(Constants.Visible, true)
+                    end
                 end,
             }),
             findButton = Button({
@@ -80,7 +92,7 @@ local function EmitterLabel(props: Props)
                 LayoutOrder = layoutOrder:Increment(),
                 Enabled = false,
                 OnActivated = function()
-                    Selection:Set({ props.ParticleEmitter })
+                    props.SetSelection(props.ParticleEmitter)
                 end,
             }),
 
